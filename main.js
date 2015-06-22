@@ -5,7 +5,7 @@ var source = document.getElementById('source');
 var result = document.getElementById('result');
 
 var ready = function(fn) {
-    if (target.width > 0 && target.height > 0 && source.width > 0 && source.height > 0) {
+    if (target.complete && source.complete) {
         fn();
     } else {
         setTimeout(function() {
@@ -45,6 +45,8 @@ ready(function() {
     img.R = getR(source, source);
     img.G = getG(source, source);
     img.B = getB(source, source);
+
+    document.body.appendChild(document.createElement('br'));
 
     draw(img.R);
     draw(img.G);
@@ -98,7 +100,6 @@ ready(function() {
         document.body.appendChild(h2);
 
         gp.nextGen();
-        gp.log();
 
         gp.programs.forEach(function(p) {
             display(gp.tree2fn(p));
