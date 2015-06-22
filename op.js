@@ -25,6 +25,18 @@ var mul = createOp(function(v1, v2) {
     return Math.min(v1 * v2, 255);
 });
 
+var min = createOp(function(v1, v2) {
+    return Math.min(v1, v2);
+});
+
+var max = createOp(function(v1, v2) {
+    return Math.max(v1, v2);
+});
+
+var avg = createOp(function(v1, v2) {
+    return (v1 + v2) / 2;
+});
+
 var invert = createOp(function(v1) {
     return 255 - v1;
 });
@@ -51,15 +63,15 @@ var getB = createOp(function(_1, _2, i, d1) {
 var diff = function(imgData1, imgData2) {
     var _diff = function(imgData1, imgData2) {
         var count = 0;
-        for (var i = 0; i < imgData1.data.length; i += 1) {
+        for (var i = 0; i < imgData1.data.length; i += 4) {
             if (imgData1.data[i] != imgData2.data[i]) {
                 count++;
             }
         }
-        return count / (imgData1.width * imgData1.height * 4);
+        return count / (imgData1.width * imgData1.height);
     };
     return Math.min(_diff(imgData1, imgData2),
                     _diff(invert(imgData1, imgData1), imgData2));
 };
 
-var ops = ['add', 'sub', 'mul', 'invert'];
+var ops = ['add', 'sub', 'mul', 'max', 'min', 'avg'];

@@ -5,7 +5,7 @@ var source = document.getElementById('source');
 var result = document.getElementById('result');
 
 var ready = function(fn) {
-    if (target.width > 0 && source.width > 0) {
+    if (target.width > 0 && target.height > 0 && source.width > 0 && source.height > 0) {
         fn();
     } else {
         setTimeout(function() {
@@ -37,6 +37,8 @@ ready(function() {
 
     ctx.drawImage(target, 0, 0, w, h);
     target = ctx.getImageData(0, 0, w, h);
+
+    ctx.clearRect(0, 0, w, h);
     ctx.drawImage(source, 0, 0, w, h);
     source = ctx.getImageData(0, 0, w, h);
 
@@ -50,12 +52,14 @@ ready(function() {
 
     var fitness = function(fn) {
         var res = (new Function("return " + fn))();
+        res = binarization(res, res);
         var fitness = 1 - diff(res, target);
         return fitness;
     };
 
     var display = function(fn) {
         var res = (new Function("return " + fn))();
+        res = binarization(res, res);
         var fitness = 1 - diff(res, target);
 
         document.body.appendChild(document.createElement('hr'));
@@ -64,10 +68,13 @@ ready(function() {
         c.style.float = "right";
         c.width = w;
         c.height = h;
-        var ctx = c.getContext('2d');
-        var b = binarization(res, res);
-        ctx.putImageData(b, 0, 0);
         document.body.appendChild(c);
+
+        // don't block
+        setTimeout(function() {
+            var ctx = c.getContext('2d');
+            ctx.putImageData(res, 0, 0);
+        }, 1);
 
         var pre = document.createElement('pre');
         pre.innerHTML = fn;
@@ -97,9 +104,12 @@ ready(function() {
         gcount++;
     };
 
-    ng();
-    ng();
-    ng();
-    ng();
-    ng();
+    var limit = 20;
+    var ngint = setInterval(function() {
+        limit--;
+        if (limit < 0) {
+            clearInterval(ngint);
+        }
+        ng();
+    }, 1000);
 });

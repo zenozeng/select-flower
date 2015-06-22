@@ -93,18 +93,18 @@ GP.prototype.fixMissingValues = function() {
 GP.prototype.nextGen = function() {
     var gp = this;
 
-    // 现有的进行突变
+    // 创建一些新的节点
+    for (var i = 0; i < 5; i++) {
+        this.createProgram();
+    }
+
+    // 突变
     var next = this.programs.map(function(p) {
         var np = p.clone();
         np.getRandomNode().op = gp.getRandomOp();
         return np;
     });
     this.programs = this.programs.concat(next);
-
-    // 创建一些新的节点
-    for (var i = 0; i < 5; i++) {
-        this.createProgram();
-    }
 
     this.fixMissingValues();
     this.programs.forEach(function(p) {
