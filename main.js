@@ -19,6 +19,14 @@ window.ops.forEach(function(op) {
     img[op] = window[op];
 });
 
+var draw = function(imgdata) {
+    var c = document.createElement('canvas');
+    c.width = imgdata.width;
+    c.height = imgdata.height;
+    c.getContext('2d').putImageData(imgdata, 0, 0);
+    document.body.appendChild(c);
+};
+
 ready(function() {
     var w = target.width;
     var h = target.height;
@@ -36,7 +44,17 @@ ready(function() {
     img.G = getG(source, source);
     img.B = getB(source, source);
 
+    draw(img.R);
+    draw(img.G);
+    draw(img.B);
+
     var fitness = function(fn) {
+        var res = (new Function("return " + fn))();
+        var fitness = 1 - diff(res, target);
+        return fitness;
+    };
+
+    var display = function(fn) {
         var res = (new Function("return " + fn))();
         var fitness = 1 - diff(res, target);
 
@@ -58,21 +76,30 @@ ready(function() {
         var div = document.createElement('div');
         div.innerHTML = JSON.stringify({fitness: fitness});
         document.body.appendChild(div);
-
-        return fitness;
     };
 
     var gp = new GP(window.ops, ['R', 'G', 'B'], fitness);
 
-    var h2 = document.createElement('h2');
-    h2.innerHTML = 'Generation 1';
-    document.body.appendChild(h2);
+    var gcount = 1;
+    var ng = function() {
+        document.body.appendChild(document.createElement('hr'));
+        var h2 = document.createElement('h2');
+        h2.innerHTML = 'Generation ' + gcount;
+        document.body.appendChild(h2);
 
-    gp.nextGen();
+        gp.nextGen();
+        gp.log();
 
-    h2 = document.createElement('h2');
-    h2.innerHTML = 'Generation 2';
-    document.body.appendChild(h2);
+        gp.programs.forEach(function(p) {
+            display(gp.tree2fn(p));
+        });
 
-    gp.nextGen();
+        gcount++;
+    };
+
+    ng();
+    ng();
+    ng();
+    ng();
+    ng();
 });

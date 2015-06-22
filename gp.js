@@ -55,11 +55,16 @@ function GP(ops, values, fitness) {
     this.ops = ops;
     this.values = values;
     this.fitness = fitness;
-    this.programs = ops.map(function(op) {
-        return new Tree(op);
-    });
+    this.programs = [];
+    for (var i = 0; i < 5; i++) {
+        this.createProgram();
+    }
     this.fixMissingValues();
 }
+
+GP.prototype.createProgram = function() {
+    this.programs.push(new Tree(this.getRandomOp()));
+};
 
 GP.prototype.getRandomOp = function() {
     var ops = this.ops;
@@ -87,16 +92,28 @@ GP.prototype.fixMissingValues = function() {
 
 GP.prototype.nextGen = function() {
     var gp = this;
+
+    // 现有的进行突变
     var next = this.programs.map(function(p) {
         var np = p.clone();
         np.getRandomNode().op = gp.getRandomOp();
         return np;
     });
     this.programs = this.programs.concat(next);
+
+    // 创建一些新的节点
+    for (var i = 0; i < 5; i++) {
+        this.createProgram();
+    }
+
     this.fixMissingValues();
     this.programs.forEach(function(p) {
         p.fitness = gp.fitness(gp.tree2fn(p));
     });
+    this.programs.sort(function(a, b) {
+        return b.fitness - a.fitness;
+    });
+    this.programs.length = 5;
 };
 
 var repeat = function(str, n) {
