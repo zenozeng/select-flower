@@ -50,16 +50,19 @@ ready(function() {
     draw(img.G);
     draw(img.B);
 
-    var fitness = function(fn) {
+    var getResult = function(fn) {
         var res = (new Function("return " + fn))();
-        res = binarization(res, res);
-        var fitness = 1 - diff(res, target);
+        // res = binarization(res, res);
+        return res;
+    };
+
+    var fitness = function(fn) {
+        var fitness = 1 - diff(getResult(fn), target);
         return fitness;
     };
 
     var display = function(fn) {
-        var res = (new Function("return " + fn))();
-        res = binarization(res, res);
+        var res = getResult(fn);
         var fitness = 1 - diff(res, target);
 
         document.body.appendChild(document.createElement('hr'));
