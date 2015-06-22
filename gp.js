@@ -94,6 +94,9 @@ GP.prototype.nextGen = function() {
     });
     this.programs = this.programs.concat(next);
     this.fixMissingValues();
+    this.programs.forEach(function(p) {
+        p.fitness = gp.fitness(gp.tree2fn(p));
+    });
 };
 
 var repeat = function(str, n) {
@@ -104,7 +107,7 @@ var repeat = function(str, n) {
     return s;
 };
 
-GP.prototype.tree2fn = function(root) {
+GP.prototype.tree2fn = function(tree) {
     var iter = function(root, indent) {
         if (typeof root === "string") {
             return root;
@@ -124,12 +127,13 @@ GP.prototype.tree2fn = function(root) {
                     ")"].join('');
         }
     };
-    return "img." + iter(root, 0);
+    return "img." + iter(tree.root, 0);
 };
 
 GP.prototype.log = function() {
     var gp = this;
     this.programs.forEach(function(p) {
-        console.log(gp.tree2fn(p.root));
+        console.log(gp.tree2fn(p, true));
+        console.log({fitness: p.fitness});
     });
 };
