@@ -27,4 +27,6 @@ ready(function() {
     gp.log();
     gp.nextGen();
     gp.log();
+    gp.nextGen();
+    gp.log();
 });

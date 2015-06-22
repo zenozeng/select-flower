@@ -96,8 +96,40 @@ GP.prototype.nextGen = function() {
     this.fixMissingValues();
 };
 
+var repeat = function(str, n) {
+    var s = '';
+    for(var i = 0; i < n; i++) {
+        s += str;
+    }
+    return s;
+};
+
+GP.prototype.tree2fn = function(root) {
+    var iter = function(root, indent) {
+        if (typeof root === "string") {
+            return root;
+        } else {
+            indent += 4;
+            return [root.op,
+                    "(\n",
+                    repeat(' ', indent),
+                    "img.",
+                    iter(root.left, indent),
+                    ",\n",
+                    repeat(' ', indent),
+                    "img.",
+                    iter(root.right, indent),
+                    "\n",
+                    repeat(' ', indent - 4),
+                    ")"].join('');
+        }
+    };
+    return "img." + iter(root, 0);
+};
+
 GP.prototype.log = function() {
+    var gp = this;
     this.programs.forEach(function(p) {
-        console.log(JSON.stringify(p, null, 4));
+        console.log(gp.tree2fn(p.root));
     });
 };
