@@ -23,5 +23,8 @@ ready(function() {
     ctx.drawImage(source, 0, 0, w, h);
     source = ctx.getImageData(0, 0, w, h);
 
-    console.log(target, source);
+    var gp = new GP(window.ops, ['R', 'G', 'B']);
+    gp.log();
+    gp.nextGen();
+    gp.log();
 });

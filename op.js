@@ -28,3 +28,9 @@ var mul = createOp(function(v1, v2) {
 var invert = createOp(function(v1) {
     return 255 - v1;
 });
+
+var binarization = createOp(function(v) {
+    return v > 128 ? 255 : 0;
+});
+
+var ops = ['add', 'sub', 'mul', 'invert', 'binarization'];
